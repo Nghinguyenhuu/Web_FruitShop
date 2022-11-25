@@ -21,13 +21,18 @@ $result2 = mysqli_query($conn, $query2);
         if ($result) {
             header('location:wallet.php');
         }else{
-            echo "Update failed";
+            echo '<script> 
+                alert("Recharge failed!");
+                </script>';
         }
     }
     if (isset($_POST['transf'])) {
-        $id_recv = $_POST['id_recv'];
-        $amount = $_POST['amount_transf'];
-        $checkid = "SELECT * FROM users WHERE id_user = '$id_recv'";
+        $id_recv = test_input($conn, $_POST['id_recv']);
+        $name = test_input($conn, $_POST['name']);
+        $email = test_input($conn, $_POST['email']);
+        $amount = test_input($conn, $_POST['amount_transf']);
+
+        $checkid = "SELECT * FROM users WHERE id_user = '$id_recv' and name = '$name' and email = '$email' and id_user != '$user_ses'";
         $result_check = mysqli_query($conn, $checkid);
         if (mysqli_num_rows($result_check) > 0) {
             $query = "UPDATE users SET wallet = wallet + $amount WHERE id_user='$id_recv'";
@@ -37,10 +42,14 @@ $result2 = mysqli_query($conn, $query2);
             if ($result && $result2) {
                 header('location:wallet.php');
             }else{
-                echo "Update failed";
+                echo '<script> 
+                alert("Transfer failed!");
+                </script>';
             }
         }else{
-            echo "ID not found";
+            echo '<script> 
+                alert("ID not found!");
+                </script>';
         }
     }
     if (isset($_POST['vip'])) {
@@ -113,7 +122,7 @@ $result2 = mysqli_query($conn, $query2);
                 <label for="amount">Amount</label>
                 <input type="number" class="form-control" id="amount" min = 1.00 max= 10000 name="amount" placeholder="Enter amount">
                 <label> Card ID </label>
-                <input type="text" class="form-control" id="card_id" name="card_id" placeholder="Enter card ID">
+                <input type="number" class="form-control" min=1 id="card_id" name="card_id" placeholder="Enter card ID">
             </div>
             <button type="submit" class="btn btn-primary" name="recharge">Recharge</button>
            <!-- <input type="number" name="amount" min=1.00 >
@@ -122,12 +131,19 @@ $result2 = mysqli_query($conn, $query2);
         <hr>
             <h3>Transfers</h3>
             <form method="POST">
-                <label for="id_recv">ID receive:</label>
-                <input type="number" name="id_recv" min=1.00 >
-                <label for="amount_transf">Amount want to transfers:</label>
-                <input type="number" name="amount_transf" min=1.00 >
-                <input type="submit" name="transf"  value="Transfers">
-            </form>
+            <div class="form-group">
+                <label> ID receive: </label>
+                <input type="number" class="form-control" name="id_recv" placeholder="Enter card ID" required>
+                <label> Name </label>
+                <input type="text" class="form-control" name="name" placeholder="Enter Recipient's Name" required>
+                <label> Email </label>
+                <input type="email" class="form-control" name="email" placeholder="Enter Recipient's Email" required>
+                <label for="amount">Amount</label>
+                <input type="number" class="form-control" name="amount_transf" min=1.00 max= 10000 placeholder="Enter amount" required>
+            </div>
+            <button type="submit" class="btn btn-primary" name="transf">Transfers</button>
+        </form>
+        <hr>
         <hr>
         <div class="vip py-5">
            <h3>VIP Account</h3> 
@@ -136,12 +152,13 @@ $result2 = mysqli_query($conn, $query2);
                 $result = mysqli_query($conn, $query2);
                 $fetch_users = mysqli_fetch_array($result);
                 if ($fetch_users['role'] == 'VIP') {
-                     echo '<h4>Current VIP: '.$fetch_cart['vip_end'].'</h4>';
-                     echo '<form method="POST">            
-                         <input type="submit" name="un_vip"  value="Unsubscribe vip">
-                     </form>';
+                    echo '<h4> VIP status: Subscribed</h4>';
+                    echo '<h4>Now you have 30% discount to '.$fetch_cart['vip_end'].'</h4>';
+                    echo '<form method="POST">            
+                        <input type="submit" name="un_vip"  value="Unsubscribe vip">
+                    </form>';
                 }else{
-                     echo '<h4>Current VIP: Not VIP</h4>';
+                     echo '<h4>VIP status: Not VIP</h4>';
                      echo '<p>Get 30% discount on all products</p>
                      <div>
                          <form method="POST">

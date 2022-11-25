@@ -11,7 +11,12 @@ include "include/connect.php";
 	<body>
     <?php
         // When form submitted, check and create user session.
-        if (isset($_POST['submit'])  ) {
+        if (isset($_POST['submit']) && $_POST['g-recaptcha-response']!="" ) {
+            $secret = '6LfCFTIjAAAAAJfpk4_4LExgTwgK_d0RFMkkX_cU';
+            $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$_POST['g-recaptcha-response']);
+            $responseData = json_decode($verifyResponse);
+            if($responseData->success)
+            { 
                 $username = stripslashes($_REQUEST['username']);    
                 $username = mysqli_real_escape_string($conn, $username);
                 $password = stripslashes($_REQUEST['password']);
@@ -22,24 +27,19 @@ include "include/connect.php";
                 $result = mysqli_query($conn, $query) or die(mysql_error());
                 $result2 = mysqli_query($conn, "SELECT * FROM `users` WHERE username='$username' AND role = 'admin'
                 AND password='" . md5($password) . "'") or die(mysql_error());
-                
-                // nếu tất cả tham số đều đã được check và không có lỗi xảy ra
-                // nếu role là admin thì tới trang admin (quản lý user và product)
+
+                //check admin or user 
                 if (mysqli_num_rows($result2) > 0) {
                     $row = mysqli_fetch_assoc($result2);
                     $_SESSION['sadmin'] = $row['id_user'];
-                    #header("Location: admin.php");
                     echo "<script>window.location.href='admin.php'</script>";
                 } else if (mysqli_num_rows($result) > 0) {
                     $row = mysqli_fetch_assoc($result);
                     $_SESSION['user_ses'] = $row['id_user'];   
-                    //với tính năng remember me, nếu ta không logout, thì ta sẽ không phải đăng nhập lại khi trong 1 tháng
-                    if (isset($_POST['remember'])) {
-                        // $params = session_get_cookie_params();
-                        // setcookie(session_name(), $_COOKIE[session_name()], time() + 60*60*24*30, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
-                        setcookie('user_ses', $row['username'], time() + 60*60*24*30);
-                    }             
-                    #header("Location: index.php");
+                    //remmember me: this function have bug after i am docker this app
+                    // if (isset($_POST['remember'])) {
+                    //     setcookie('user_ses', $row['username'], time() + 60*60*24*30);
+                    // }             
                     echo "<script>window.location.href='index.php'</script>";
                 } else {
                     echo "<div class='form'>
@@ -48,7 +48,7 @@ include "include/connect.php";
                         </div>";
                 }
             }
-        
+        }
     ?>
         <div class="container">
                 <form class="form" method="post" name="login">
@@ -56,9 +56,9 @@ include "include/connect.php";
                     <hr>
                     <input type="text" class="login-input" name="username" placeholder="Username" autofocus="true"/>
                     <input type="password" class="login-input" name="password" placeholder="Password"/>
-                 
+                    <div class="g-recaptcha" data-sitekey="6LfCFTIjAAAAAKTiq6i2_Zfgv0ybNou6I6D8I4l9"></div>
                     <input type="submit" value="Login" name="submit" class="login-button"/>
-                    <input type="checkbox" name="remember" id="remember">Remember me</label>
+                    <!-- <input type="checkbox" name="remember" id="remember">Remember me</label> -->
                     <hr>
                     <p class="link"><a href="register.php">New Registration</a></p>
 

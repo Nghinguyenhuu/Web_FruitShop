@@ -20,42 +20,23 @@
         <?php
             // When form submitted, insert values into the database.
             if (isset($_POST['username'])) {
-                // // removes backslashes
-                // $username = stripslashes($_POST['username']);
-                // //escapes special characters in a string
-                // $username = mysqli_real_escape_string($conn, $username);
-
-                // $password = stripslashes($_POST['password']);
-                // $password = mysqli_real_escape_string($conn, $password);
-
-                // $name = stripslashes($_POST['name']);
-                // $name = mysqli_real_escape_string($conn, $name);
-
-                // $email = stripslashes($_POST['email']);
-                // $email = mysqli_real_escape_string($conn, $email);
-
-                // $contact = stripslashes($_POST['contact']);
-                // $contact = mysqli_real_escape_string($conn, $contact);
-
                 $username = test_input($conn, $_POST['username']);
                 $password = test_input($conn, $_POST['password']);
                 $name = test_input($conn, $_POST['name']);
                 $email = test_input($conn, $_POST['email']);
                 $contact = test_input($conn, $_POST['contact']);
 
-                //regex lấy từ mạng, chưa tìm hiểu kỹ
                 if (!preg_match("/^\\+?[1-9][0-9]{7,14}$/", $contact)) {
-                    echo "Phone number is invalid";
-                    exit();
+                    echo "<script>
+                    alert('Phone number is invalid! Please input again!');
+                    </script>";
+                    
                 }
-                if (!preg_match("/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/", $email)) {
-                    echo "Email is invalid";
-                    exit();
+                else if (!preg_match("/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/", $email)) {
+                    echo "<script>alert('Email is invalid! Please input again!');
+                    </script>";
                 }
-                // if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                //     $emailErr = "Invalid email format";
-                //   }
-
+                else {
 
                 $query    = "INSERT into `users` (username, password, name, email, phone_number, role)
                             VALUES ('$username', '" . md5($password) . "', '$name', '$email', '$contact', 'user')";
@@ -71,29 +52,13 @@
                         <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
                         </div>";
                 }
-            } else {
+            } 
+            }
+            else {
         ?>
 
             <h1 class="login-title">Registration</h1> 
             <hr>
-
-        <!-- <form class="form " action="" method="post">
-            <h1 class="login-title">Registration</h1> 
-            <hr>
-            <ul class="list-unstyled">
-                <li><label><b>User Name</b></label></li>       
-                <li><input type="text" class="login-input" name="username" placeholder="Username" required /></li> 
-                <li><label><b>Email</b></label> </li> 
-                <li><input type="email" name="email" placeholder="Email" required /></li> 
-                <li><label><b>Phone Number</b></label> </li> 
-                <li><input type="tel" name="phone_number" placeholder="Phone Number" required /></li> 
-                <li><label><b>Password</b></label> </li> 
-                <li><input type="password" class="login-input" name="password" placeholder="Password"></li> 
-            </ul>
-            <hr>
-            <input type="submit" name="submit" value="Register" class="login-button">
-            <p class="link"><a href="login.php">Click to Login</a></p>
-        </form> -->
 
         <form class="form-horizontal" method="POST" action="" enctype="multipart/form-data">
             <div class="form-group">
@@ -132,9 +97,7 @@
             </div>
                 
         </form>
-    <?php
-        }
-    ?>
+    <?php } ?>
     </div>
 </body>
 </html>

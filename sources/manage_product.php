@@ -25,14 +25,14 @@
         if($_FILES['add_image']['name']!=""){
             check_upload_image('add_image');
             if (move_uploaded_file($_FILES['add_image']['tmp_name'], $folder)){
-               mysqli_query($conn, "INSERT INTO fruits_table (name, price, image) VALUES ('$product_name', '$product_price', '$file_img' )");
-               echo '<script> 
-                alert("Success!");
+                mysqli_query($conn, "INSERT INTO fruits_table (name, price, image) VALUES ('$product_name', '$product_price', '$file_img' )");
+                echo '<script> 
+                alert("Success to add new product!");
                 window.location.href="manage_product.php";
-                </script>';;
+                </script>';
             }else{
                 echo '<script> 
-                alert("Failed!");
+                alert("Failed to add new product!");
                 window.location.href="manage_product.php";
                 </script>';
             }

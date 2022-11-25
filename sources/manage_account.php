@@ -5,7 +5,6 @@
         header('location:login.php');
     };
     include "include/connect.php";
-    # câu lệnh truy vấn tất cả các dữ liệu trong bảng tbl_product theo giá trị id tăng dần 
     $query = "SELECT * FROM fruits_table ORDER BY id ASC";
     $query2 = "SELECT * FROM users ORDER BY id_user ASC";
     $result2 = mysqli_query($conn, $query2);

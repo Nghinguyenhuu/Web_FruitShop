@@ -49,14 +49,22 @@ if(isset($_GET['delete_all'])){
 }
 if(isset($_POST['buy_all'])){
 	$total = $_POST['product_total'];
-	mysqli_query($conn, "UPDATE `users` SET wallet = wallet - $total WHERE id_user = '$user_ses'") or die('query failed');
-	mysqli_query($conn, "DELETE FROM `cart` WHERE id_user = '$user_ses'") or die('query failed');
-	header('location:index.php');
+	if ($total < $fetch_users['wallet']) {
+		mysqli_query($conn, "UPDATE `users` SET wallet = wallet - $total WHERE id_user = '$user_ses'") or die('query failed');
+		mysqli_query($conn, "DELETE FROM `cart` WHERE id_user = '$user_ses'") or die('query failed');
+		header('location:index.php');
+	} else {
+		echo "<script>alert('You don't have enough money to buy all products in your cart')</script>";
+		}			
 }
 if(isset($_POST['buy_item'])){
 	$product_price = $_POST['product_price'];
-	mysqli_query($conn, "UPDATE `users` SET wallet = wallet - $product_price WHERE id_user = '$user_ses'") or die('query failed');
-	header('location:index.php');
+	if ($product_price < $fetch_users['wallet']) {
+		mysqli_query($conn, "UPDATE `users` SET wallet = wallet - $product_price WHERE id_user = '$user_ses'") or die('query failed');
+		header('location:index.php');
+	} else {
+		echo "<script>alert('You don't have enough money to buy this product')</script>";
+		}
 }
 
 
@@ -67,8 +75,6 @@ if(isset($_POST['buy_item'])){
 		<div class="container-fluid pt-4 ">	
 			<div class="view">
 				<div class="row">
-				<!-- Khi nhấn nút submit, dữ liệu được điền trong form sẽ được gửi đi với method POST
-				Đây là form để điền số lượng trái cây cần mua -->
 				<?php
 					$select_product = mysqli_query($conn, "SELECT * FROM `fruits_table`") or die('query failed');
 					if(mysqli_num_rows($select_product) > 0){
@@ -77,12 +83,12 @@ if(isset($_POST['buy_item'])){
 				<form method="post" class="box border w-25" action="index.php?action=add" align="center">
 					<ul class="list-unstyled list-group list-group-horizontal">
 						<li><ul class="list-unstyled">
-							<li><img class="image" src="img/<?php echo $fetch_product['image']; ?>"><br /></li>
+							<li><img class="image img-fluid" src="img/<?php echo $fetch_product['image']; ?>"><br /></li>
 						</ul></li>
 						<li><ul class="list-unstyled m-3 ">
 							<li><div class="name text-info"><h4><?php echo $fetch_product['name']; ?></h4></div></li>
 							<li><div class="price text-danger">$<?php echo $fetch_product['price']; ?></div></li>						
-							<input type="number" min="1" name="product_quantity" style="width: 7em" value="1" >
+							<input type="number" min="1" max="1000" name="product_quantity" style="width: 7em" value="1" >
 							<li><input type="submit" value="Add to cart" name="add_to_cart" style="margin-top:5px" ; class="btn btn-danger"></li>
 							<li><input type="submit" value="Buy" name="buy_item" style="margin-top:5px" ; class="btn btn-success"></li>
 						</ul></li>

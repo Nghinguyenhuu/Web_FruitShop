@@ -3,11 +3,6 @@
 				<li class="nav-item mx-5">
 					<a class="nav-link" href="index.php">Fruit Shop</a>
 				</li>
-				<li class="nav-item mr-5 ">
-					<div class="from-group">
-						<input type="text" class="form-control">
-					</div>
-				</li>
                 <li class="nav-item mx-3">
 					<a class="nav-link" href="profile.php">Profile</a>
 				</li>

@@ -19,7 +19,20 @@ if(isset($_POST['edit'])){
    $image = test_input($conn, $_FILES['photo']['name']);
    $password = test_input($conn, $_POST['new_password']);
    $curr_password = test_input($conn, $_POST['curr_password']);
-
+   
+   if (!preg_match("/^\\+?[1-9][0-9]{7,14}$/", $phone)) {
+      echo "<script>
+      alert('Phone number is invalid');
+      window.location.href='profile.php';
+      </script>";
+      exit();
+   }
+   if (!preg_match("/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/", $email)) {
+      echo "<script>alert('Email is invalid');
+      window.location.href='profile.php';
+      </script>";
+      exit();
+   }
    if($_FILES['photo']['name']!=""){
       check_upload_image('photo');
    }
@@ -96,7 +109,7 @@ if(isset($_POST['edit'])){
          <div class="form-group">
             <label for="email" class="col-sm-3 control-label">Email</label>
             <div class="col-sm-9">
-               <input type="text" class="form-control" id="email" name="email" value="<?php echo $fetch_cart['email']; ?>">
+               <input type="email" class="form-control" id="email" name="email" value="<?php echo $fetch_cart['email']; ?>">
             </div>
          </div>
          <div class="form-group">
@@ -106,7 +119,7 @@ if(isset($_POST['edit'])){
             </div>
          </div>
          <div class="form-group">
-            <label for="contact" class="col-sm-3 control-label">Contact Info</label>
+            <label for="contact" class="col-sm-3 control-label">Contact Info (8-14 number)</label>
             <div class="col-sm-9">
                <input type="text" class="form-control" id="contact" name="contact" value="<?php echo $fetch_cart['phone_number']; ?>">
             </div>
