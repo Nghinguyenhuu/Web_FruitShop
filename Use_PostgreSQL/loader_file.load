@@ -1,0 +1,7 @@
+LOAD DATABASE
+    FROM mysql://nbp1:passMySQL@192.168.3.98/fruit_shop
+    INTO postgresql://postgres:admin123@192.168.3.98/fruit_shop
+
+WITH include no drop, create tables, create indexes, reset sequences
+
+SET work_mem to '16MB', maintenance_work_mem to '512 MB';
